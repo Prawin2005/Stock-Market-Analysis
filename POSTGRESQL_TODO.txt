@@ -1,0 +1,94 @@
+====================================================
+  POSTGRESQL SETUP - TODO FOR TOMORROW
+  Project: Stock Market Analytics Platform
+====================================================
+
+STEP 1 - DOWNLOAD POSTGRESQL
+------------------------------
+- Go to: https://www.postgresql.org/download/windows/
+- Click "Download the installer" (latest version)
+- Run the installer
+- During install:
+    > Keep all default settings
+    > Set a password for "postgres" user --> REMEMBER THIS!
+    > Port: 5432 (default, don't change)
+    > When it asks to install "Stack Builder" at the end --> click SKIP
+
+
+STEP 2 - CREATE THE DATABASE
+------------------------------
+- Open pgAdmin 4 (installed with PostgreSQL, find it in Start Menu)
+- In left sidebar: Servers --> PostgreSQL --> Databases
+- Right-click "Databases" --> Create --> Database
+- Set Database name: stock_market
+- Click Save
+
+
+STEP 3 - RUN THE SETUP SQL SCRIPT
+------------------------------
+- In pgAdmin 4, click on "stock_market" database
+- Click the "Query Tool" button in the top toolbar
+- Click "Open File" --> navigate to:
+    C:\Users\sukun\Desktop\Stock Market\database\init.sql
+- Press F5 (or click Execute button)
+- You should see: "Database initialized successfully!"
+
+
+STEP 4 - UPDATE THE PASSWORD IN .ENV FILE
+------------------------------
+- Open this file in any text editor:
+    C:\Users\sukun\Desktop\Stock Market\backend\.env
+
+- Find this line:
+    DB_PASSWORD=password123
+
+- Change it to YOUR password (the one you set in Step 1):
+    DB_PASSWORD=your_actual_password_here
+
+- Save the file
+
+
+STEP 5 - INSTALL REDIS (FOR CACHING)
+------------------------------
+- Go to: https://www.memurai.com/get-memurai
+- Download and run the installer
+- It will run automatically as a Windows background service
+- No extra configuration needed, works on port 6379
+
+NOTE: If you skip Redis, the app still works fine.
+      It will just use an in-memory cache instead.
+
+
+STEP 6 - RESTART THE BACKEND SERVER
+------------------------------
+- Stop the backend if it is running (Ctrl+C in the terminal)
+- Start it again:
+    cd "C:\Users\sukun\Desktop\Stock Market\backend"
+    npm run dev
+
+- You should now see these lines in the terminal:
+    [DB] Successfully connected to PostgreSQL Database!
+    [DB] Database tables verified/initialized.
+    [Cache] Redis client is ready and connected!
+
+- This means PostgreSQL is properly connected and data
+  will now PERSIST after server restarts.
+
+
+====================================================
+  QUICK REMINDER - HOW TO START THE PROJECT
+====================================================
+
+Open TWO terminal windows:
+
+Terminal 1 (Backend):
+    cd "C:\Users\sukun\Desktop\Stock Market\backend"
+    npm run dev
+
+Terminal 2 (Frontend):
+    cd "C:\Users\sukun\Desktop\Stock Market\frontend"
+    npm run dev
+
+Then open browser at: http://localhost:5173
+
+====================================================

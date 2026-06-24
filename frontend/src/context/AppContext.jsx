@@ -1,0 +1,368 @@
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+
+const AppContext = createContext();
+
+const API_BASE = 'http://localhost:5000/api';
+const WS_BASE = 'ws://localhost:5000/ws';
+
+export function AppProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [prices, setPrices] = useState({});
+  const [stocks, setStocks] = useState([]);
+  const [watchlist, setWatchlist] = useState([]);
+  const [portfolio, setPortfolio] = useState({ summary: {}, holdings: [] });
+  const [transactions, setTransactions] = useState([]);
+  const [aiRecs, setAiRecs] = useState([]);
+  const [toast, setToast] = useState(null);
+  const wsRef = useRef(null);
+
+  // Helper to trigger toast alerts
+  const showToast = (message, type = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  // Auth fetch headers
+  const getHeaders = () => {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
+  // Load basic static stocks
+  const fetchStocks = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/stocks`);
+      const data = await res.json();
+      if (res.ok) setStocks(data.stocks || []);
+    } catch (err) {
+      console.error('Failed to fetch stocks list:', err);
+    }
+  };
+
+  // Load portfolio overview
+  const fetchPortfolio = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/portfolio/overview`, { headers: getHeaders() });
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (res.ok) {
+        setPortfolio(data);
+        if (data.summary && data.summary.cash !== undefined) {
+          setUser(prev => prev ? { ...prev, balance: Number(data.summary.cash) } : null);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load portfolio:', err);
+    }
+  };
+
+  // Load transactions list
+  const fetchTransactions = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/trading/transactions`, { headers: getHeaders() });
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (res.ok) setTransactions(data.transactions || []);
+    } catch (err) {
+      console.error('Failed to fetch transactions:', err);
+    }
+  };
+
+  // Load watchlist tickers
+  const fetchWatchlist = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/stocks/watchlist/list`, { headers: getHeaders() });
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (res.ok) setWatchlist(data.watchlist || []);
+    } catch (err) {
+      console.error('Failed to fetch watchlist:', err);
+    }
+  };
+
+  // Fetch AI Recommendations
+  const fetchAiRecommendations = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/ai/recommendations`, { headers: getHeaders() });
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (res.ok) setAiRecs(data.recommendations || []);
+    } catch (err) {
+      console.error('Failed to fetch AI recs:', err);
+    }
+  };
+
+
+  // Fetch logged-in user profile
+  const fetchUserProfile = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/auth/me`, { headers: getHeaders() });
+      if (res.status === 401 || res.status === 403 || res.status === 404) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (res.ok && data.user) {
+        data.user.balance = Number(data.user.balance);
+        setUser(data.user);
+      }
+    } catch (err) {
+      console.error('Failed to fetch user profile:', err);
+    }
+  };
+
+  // Fetch all user session metrics
+  const loadUserData = () => {
+    fetchUserProfile();
+    fetchPortfolio();
+    fetchTransactions();
+    fetchWatchlist();
+    fetchAiRecommendations();
+  };
+
+  // Initialize data and connections
+  useEffect(() => {
+    fetchStocks();
+    if (token) {
+      loadUserData();
+    }
+  }, [token]);
+
+  // Connect WebSockets for real-time data feeds
+  useEffect(() => {
+    // Connect to WebSocket server
+    const connectWS = () => {
+      console.log('📡 [WebSocket] Trying to establish WebSocket connection...');
+      const ws = new WebSocket(WS_BASE);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('📡 [WebSocket] Connection established successfully!');
+      };
+
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'INITIAL_PRICES') {
+          setPrices(msg.prices);
+        } else if (msg.type === 'PRICE_UPDATES') {
+          setPrices(prev => ({ ...prev, ...msg.prices }));
+        }
+      };
+
+      ws.onclose = () => {
+        console.log('📡 [WebSocket] Connection closed. Retrying in 5 seconds...');
+        setTimeout(connectWS, 5000);
+      };
+
+      ws.onerror = (err) => {
+        console.error('📡 [WebSocket] Connection error:', err);
+      };
+    };
+
+    connectWS();
+
+    return () => {
+      if (wsRef.current) wsRef.current.close();
+    };
+  }, []);
+
+  // Sync user cash balance periodically
+  useEffect(() => {
+    let interval;
+    if (token) {
+      interval = setInterval(() => {
+        fetchPortfolio();
+      }, 5000); // sync portfolio totals and cash balance every 5s
+    }
+    return () => clearInterval(interval);
+  }, [token]);
+
+  // Login action
+  const login = async (email, password) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        setUser(data.user);
+        showToast('Login successful! Welcome back.', 'success');
+        return true;
+      } else {
+        showToast(data.error || 'Login failed.', 'error');
+        return false;
+      }
+    } catch (err) {
+      showToast('Connection error. Server is offline.', 'error');
+      return false;
+    }
+  };
+
+  // Register action
+  const register = async (email, password) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Don't auto-login: let the user sign in manually after registration
+        showToast('Account created! Please sign in with your credentials.', 'success');
+        return true;
+      } else {
+        showToast(data.error || 'Registration failed.', 'error');
+        return false;
+      }
+    } catch (err) {
+      showToast('Connection error. Server is offline.', 'error');
+      return false;
+    }
+  };
+
+  // Logout action
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    setUser(null);
+    setPortfolio({ summary: {}, holdings: [] });
+    setTransactions([]);
+    setWatchlist([]);
+    showToast('Logged out successfully.', 'info');
+  };
+
+  // Add stock to watchlist
+  const toggleWatchlist = async (ticker) => {
+    if (!token) {
+      showToast('Please log in to manage your watchlist.', 'warning');
+      return;
+    }
+    const isWatched = watchlist.includes(ticker);
+    const endpoint = isWatched ? `remove/${ticker}` : 'add';
+    const method = isWatched ? 'DELETE' : 'POST';
+
+    try {
+      const res = await fetch(`${API_BASE}/stocks/watchlist/${endpoint}`, {
+        method,
+        headers: getHeaders(),
+        body: !isWatched ? JSON.stringify({ ticker }) : undefined
+      });
+      if (res.ok) {
+        setWatchlist(prev => 
+          isWatched ? prev.filter(t => t !== ticker) : [...prev, ticker]
+        );
+        showToast(`${ticker} ${isWatched ? 'removed from' : 'added to'} watchlist.`, 'success');
+      } else {
+        const d = await res.json();
+        showToast(d.error || 'Failed to update watchlist.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error.', 'error');
+    }
+  };
+
+  // Execute Paper Trade
+  const executeTrade = async (ticker, type, shares) => {
+    if (!token) {
+      showToast('Please log in to trade.', 'warning');
+      return false;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/trading/order`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ ticker, type, shares: Number(shares) })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message, 'success');
+        fetchPortfolio(); // reload positions and cash
+        fetchTransactions(); // reload logs
+        return true;
+      } else {
+        showToast(data.error || 'Order execution failed.', 'error');
+        return false;
+      }
+    } catch (err) {
+      showToast('Trade execution failed.', 'error');
+      return false;
+    }
+  };
+
+  // Retrain AI recommendations
+  const retrainAi = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/ai/recalculate`, {
+        method: 'POST',
+        headers: getHeaders()
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAiRecs(data.recommendations);
+        showToast(data.message, 'success');
+      } else {
+        showToast(data.error || 'Failed to retrain models.', 'error');
+      }
+    } catch (err) {
+      showToast('API network error.', 'error');
+    }
+  };
+
+  return (
+    <AppContext.Provider value={{
+      user,
+      token,
+      activeTab,
+      setActiveTab,
+      prices,
+      stocks,
+      watchlist,
+      portfolio,
+      transactions,
+      aiRecs,
+      toast,
+      showToast,
+      login,
+      register,
+      logout,
+      toggleWatchlist,
+      executeTrade,
+      retrainAi,
+      API_BASE,
+      getHeaders
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+export function useApp() {
+  return useContext(AppContext);
+}

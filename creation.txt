@@ -1,0 +1,49 @@
+6. Prawin Lakhman K
+
+Project: Stock Market Analytics & Portfolio Management Platform
+
+Modules:
+
+Portfolio Tracking
+Watchlists
+Real-Time Market Data
+AI Stock Recommendations
+Risk Analysis
+Investment Reports
+Trading Simulation
+
+Tech Stack:
+
+React
+Node.js
+PostgreSQL
+Redis
+WebSockets
+
+Stock-Market-Analytics/
+│
+├── frontend/ (React)
+│   ├── Dashboard
+│   ├── Portfolio
+│   ├── Watchlist
+│   ├── Market Data
+│   ├── AI Recommendations
+│   ├── Risk Analysis
+│   ├── Reports
+│   └── Trading Simulator
+│
+├── backend/ (Node.js + Express)
+│   ├── auth
+│   ├── users
+│   ├── portfolio
+│   ├── stocks
+│   ├── ai
+│   ├── reports
+│   ├── websocket
+│   └── trading
+│
+├── database/
+│   └── PostgreSQL
+│
+└── cache/
+    └── Redis
