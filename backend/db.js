@@ -88,7 +88,7 @@ export async function initDb() {
     console.log('[DB] Connected to PostgreSQL.');
     await client.query(createTablesSQL);
     
-    // Safety migrations for existing database installations
+    
     await client.query(`
       ALTER TABLE ai_recommendations ADD COLUMN IF NOT EXISTS validation_status VARCHAR(50);
       ALTER TABLE ai_recommendations ADD COLUMN IF NOT EXISTS consensus_score INTEGER;
@@ -105,7 +105,7 @@ export async function initDb() {
 }
 
 export const db = {
-  // Users
+  
   createUser: async (email, passwordHash) => {
     if (!useMock) {
       const res = await pool.query(
@@ -198,7 +198,7 @@ export const db = {
     return user.balance;
   },
 
-  // Portfolio
+  
   getPortfolio: async (userId) => {
     if (!useMock) {
       const res = await pool.query(
@@ -257,7 +257,7 @@ export const db = {
     return { ...p };
   },
 
-  // Transactions
+  
   createTransaction: async (userId, ticker, type, shares, price) => {
     if (!useMock) {
       const res = await pool.query(
@@ -294,7 +294,7 @@ export const db = {
       .map(t => ({ ...t, shares: Number(t.shares), price: Number(t.price) }));
   },
 
-  // Watchlist
+  
   getWatchlist: async (userId) => {
     if (!useMock) {
       const res = await pool.query('SELECT ticker FROM watchlists WHERE user_id = $1', [userId]);
@@ -329,7 +329,7 @@ export const db = {
     return true;
   },
 
-  // AI Recommendations
+  
   getAiRecommendations: async () => {
     if (!useMock) {
       const res = await pool.query('SELECT * FROM ai_recommendations');

@@ -13,7 +13,7 @@ export default function StockChart({ history, ticker }) {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
 
-  // SVG dimensions
+  
   const width = 600;
   const height = 300;
   const paddingLeft = 50;
@@ -21,30 +21,30 @@ export default function StockChart({ history, ticker }) {
   const paddingTop = 20;
   const paddingBottom = 40;
 
-  // Chart area dimensions
+  
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  // Extract prices and find bounds
+  
   const prices = history.map((h) => h.close);
   const maxPrice = Math.max(...prices);
   const minPrice = Math.min(...prices);
   const priceRange = maxPrice - minPrice || 1;
 
-  // Cushion margins (10% padding top/bottom)
+  
   const yMax = maxPrice + priceRange * 0.05;
   const yMin = Math.max(0, minPrice - priceRange * 0.05);
   const yRange = yMax - yMin;
 
-  // Coordinates helper
+  
   const getCoords = (index, value) => {
     const x = paddingLeft + (index / (history.length - 1)) * chartWidth;
-    // In SVG, y=0 is at the top
+    
     const y = paddingTop + (1 - (value - yMin) / yRange) * chartHeight;
     return { x, y };
   };
 
-  // Build the line path and area path
+  
   let pathD = '';
   let areaD = '';
 
@@ -63,7 +63,7 @@ export default function StockChart({ history, ticker }) {
     }
   });
 
-  // Calculate coordinates for grid lines
+  
   const gridLines = [];
   const gridCount = 5;
   for (let i = 0; i < gridCount; i++) {
@@ -72,15 +72,15 @@ export default function StockChart({ history, ticker }) {
     gridLines.push({ value, y });
   }
 
-  // Handle interaction
+  
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    // Convert client X to SVG local coordinate space
+    
     const clientX = e.clientX - rect.left;
     const svgX = (clientX / rect.width) * width;
     
-    // Find index of closest data point
+    
     const relativeX = svgX - paddingLeft;
     const fraction = relativeX / chartWidth;
     let idx = Math.round(fraction * (history.length - 1));
@@ -88,7 +88,7 @@ export default function StockChart({ history, ticker }) {
 
     setHoverIndex(idx);
 
-    // Tooltip position
+    
     const { x, y } = getCoords(idx, history[idx].close);
     setTooltipPos({ x, y });
   };
@@ -97,7 +97,7 @@ export default function StockChart({ history, ticker }) {
     setHoverIndex(null);
   };
 
-  // Color theme: check if price trend is positive overall
+  
   const firstPrice = history[0].close;
   const lastPrice = history[history.length - 1].close;
   const isPositive = lastPrice >= firstPrice;

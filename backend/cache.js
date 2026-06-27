@@ -73,7 +73,7 @@ export const cache = {
         await client.setEx(key, seconds, str);
         return;
       } catch {
-        // fall through to mock
+        
       }
     }
     mockCache.set(key, { value: str, expiry: Date.now() + seconds * 1000 });
@@ -85,7 +85,7 @@ export const cache = {
         await client.del(key);
         return;
       } catch {
-        // fall through to mock
+        
       }
     }
     mockCache.delete(key);
@@ -97,7 +97,7 @@ export const cache = {
         await client.flushAll();
         return;
       } catch {
-        // fall through to mock
+        
       }
     }
     mockCache.clear();

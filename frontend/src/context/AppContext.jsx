@@ -18,13 +18,13 @@ export function AppProvider({ children }) {
   const [toast, setToast] = useState(null);
   const wsRef = useRef(null);
 
-  // Helper to trigger toast alerts
+  
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Auth fetch headers
+  
   const getHeaders = () => {
     const headers = { 'Content-Type': 'application/json' };
     if (token) {
@@ -33,7 +33,7 @@ export function AppProvider({ children }) {
     return headers;
   };
 
-  // Load basic static stocks
+  
   const fetchStocks = async () => {
     try {
       const res = await fetch(`${API_BASE}/stocks`);
@@ -44,7 +44,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Load portfolio overview
+  
   const fetchPortfolio = async () => {
     if (!token) return;
     try {
@@ -65,7 +65,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Load transactions list
+  
   const fetchTransactions = async () => {
     if (!token) return;
     try {
@@ -81,7 +81,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Load watchlist tickers
+  
   const fetchWatchlist = async () => {
     if (!token) return;
     try {
@@ -97,7 +97,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Fetch AI Recommendations
+  
   const fetchAiRecommendations = async () => {
     if (!token) return;
     try {
@@ -114,7 +114,7 @@ export function AppProvider({ children }) {
   };
 
 
-  // Fetch logged-in user profile
+  
   const fetchUserProfile = async () => {
     if (!token) return;
     try {
@@ -133,7 +133,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Fetch all user session metrics
+  
   const loadUserData = () => {
     fetchUserProfile();
     fetchPortfolio();
@@ -142,7 +142,7 @@ export function AppProvider({ children }) {
     fetchAiRecommendations();
   };
 
-  // Initialize data and connections
+  
   useEffect(() => {
     fetchStocks();
     if (token) {
@@ -150,9 +150,9 @@ export function AppProvider({ children }) {
     }
   }, [token]);
 
-  // Connect WebSockets for real-time data feeds
+  
   useEffect(() => {
-    // Connect to WebSocket server
+    
     const connectWS = () => {
       console.log('📡 [WebSocket] Trying to establish WebSocket connection...');
       const ws = new WebSocket(WS_BASE);
@@ -188,18 +188,18 @@ export function AppProvider({ children }) {
     };
   }, []);
 
-  // Sync user cash balance periodically
+  
   useEffect(() => {
     let interval;
     if (token) {
       interval = setInterval(() => {
         fetchPortfolio();
-      }, 5000); // sync portfolio totals and cash balance every 5s
+      }, 5000); 
     }
     return () => clearInterval(interval);
   }, [token]);
 
-  // Login action
+  
   const login = async (email, password) => {
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
@@ -224,7 +224,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Register action
+  
   const register = async (email, password) => {
     try {
       const res = await fetch(`${API_BASE}/auth/register`, {
@@ -234,7 +234,7 @@ export function AppProvider({ children }) {
       });
       const data = await res.json();
       if (res.ok) {
-        // Don't auto-login: let the user sign in manually after registration
+        
         showToast('Account created! Please sign in with your credentials.', 'success');
         return true;
       } else {
@@ -247,7 +247,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Logout action
+  
   const logout = () => {
     localStorage.removeItem('token');
     setToken('');
@@ -258,7 +258,7 @@ export function AppProvider({ children }) {
     showToast('Logged out successfully.', 'info');
   };
 
-  // Add stock to watchlist
+  
   const toggleWatchlist = async (ticker) => {
     if (!token) {
       showToast('Please log in to manage your watchlist.', 'warning');
@@ -288,7 +288,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Execute Paper Trade
+  
   const executeTrade = async (ticker, type, shares) => {
     if (!token) {
       showToast('Please log in to trade.', 'warning');
@@ -303,8 +303,8 @@ export function AppProvider({ children }) {
       const data = await res.json();
       if (res.ok) {
         showToast(data.message, 'success');
-        fetchPortfolio(); // reload positions and cash
-        fetchTransactions(); // reload logs
+        fetchPortfolio(); 
+        fetchTransactions(); 
         return true;
       } else {
         showToast(data.error || 'Order execution failed.', 'error');
@@ -316,7 +316,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Retrain AI recommendations
+  
   const retrainAi = async () => {
     try {
       const res = await fetch(`${API_BASE}/ai/recalculate`, {

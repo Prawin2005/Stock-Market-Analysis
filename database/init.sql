@@ -1,12 +1,4 @@
--- ============================================================
--- Stock Market Analytics & Portfolio Management Platform
--- Database Initialization Script
--- Run this file in psql or pgAdmin after creating the database
--- ============================================================
 
--- Create the database (run this separately as superuser if needed)
--- CREATE DATABASE stock_market;
--- \c stock_market
 
 -- Drop tables if they exist (for clean re-initialization) 
 DROP TABLE IF EXISTS ai_recommendations CASCADE;

@@ -26,7 +26,7 @@ export default function RiskReportsView() {
     if (token) {
       fetchReport();
     }
-  }, [token, portfolio.holdings]); // regenerate when portfolio changes
+  }, [token, portfolio.holdings]); 
 
   const handlePrint = () => {
     window.print();

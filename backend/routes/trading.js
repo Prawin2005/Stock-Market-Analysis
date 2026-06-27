@@ -40,7 +40,7 @@ router.post('/order', authenticateToken, async (req, res) => {
     }
 
     if (orderType === 'BUY') {
-      // Atomic balance deduction — prevents race conditions
+      
       const newBalance = await db.deductBalance(user.id, totalCost);
 
       if (newBalance === null) {

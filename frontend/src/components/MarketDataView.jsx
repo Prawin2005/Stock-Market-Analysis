@@ -9,12 +9,12 @@ export default function MarketDataView() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Trade inputs
+
   const [sharesInput, setSharesInput] = useState('');
   const [tradeType, setTradeType] = useState('BUY');
   const [tradeLoading, setTradeLoading] = useState(false);
 
-  // Fetch chosen ticker from localStorage redirect
+
   useEffect(() => {
     const cached = localStorage.getItem('selectedTicker');
     if (cached) {
@@ -69,19 +69,19 @@ export default function MarketDataView() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '10px 0' }}>
-      
-      {/* Search & Header bar */}
+
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div>
           <h1 style={{ fontSize: '2rem', marginBottom: '6px' }}>Market Data</h1>
           <p style={{ color: 'var(--text-secondary)' }}>View interactive technical indicators and execute paper trades.</p>
         </div>
 
-        {/* Stock Select Picker */}
+
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <Search size={18} style={{ color: 'var(--text-muted)' }} />
-          <select 
-            value={selectedTicker} 
+          <select
+            value={selectedTicker}
             onChange={(e) => setSelectedTicker(e.target.value)}
             className="glass-input"
             style={{ minWidth: '150px', cursor: 'pointer', fontWeight: 600, backgroundColor: '#0f172a', color: '#ffffff' }}
@@ -95,7 +95,7 @@ export default function MarketDataView() {
         </div>
       </div>
 
-      {/* Main Stock Statistics header */}
+
       {activeStock && (
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
           <div>
@@ -115,31 +115,31 @@ export default function MarketDataView() {
               </span>
             </div>
           </div>
-          <button 
-            onClick={() => toggleWatchlist(selectedTicker)} 
-            className="glass-btn" 
-            style={{ 
+          <button
+            onClick={() => toggleWatchlist(selectedTicker)}
+            className="glass-btn"
+            style={{
               borderColor: isWatched ? 'rgba(245, 158, 11, 0.4)' : 'var(--card-border)',
               color: isWatched ? 'var(--color-warning)' : 'var(--text-primary)'
             }}
           >
-            <Eye size={16} /> {isWatched ? 'Watched' : 'Watch Symbol'}
+            <Eye size={16} /> {isWatched ? 'Watched' : 'Watch'}
           </button>
         </div>
       )}
 
-      {/* Core Split: Graph & Trade executor */}
+
       <div style={{ display: 'grid', gridTemplateColumns: '3fr 1.5fr', gap: '30px' }}>
-        
-        {/* Graph Card */}
+
+
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
             <h3 style={{ fontSize: '1.25rem' }}>30-Day Historical Trend</h3>
-            <span style={{ 
-              fontSize: '0.7rem', 
-              color: isRealTime ? 'var(--color-success)' : 'var(--text-muted)', 
-              background: isRealTime ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.03)', 
-              padding: '2px 8px', 
+            <span style={{
+              fontSize: '0.7rem',
+              color: isRealTime ? 'var(--color-success)' : 'var(--text-muted)',
+              background: isRealTime ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+              padding: '2px 8px',
               borderRadius: '9999px',
               border: isRealTime ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(255, 255, 255, 0.05)',
               fontWeight: 600,
@@ -157,15 +157,15 @@ export default function MarketDataView() {
           )}
         </div>
 
-        {/* Trade Panel */}
+
         <div className="glass-panel" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
             <ArrowRightLeft size={18} style={{ color: 'var(--color-accent)' }} /> Place Order
           </h3>
 
           <form onSubmit={handleTrade} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
-            {/* Type selector toggle */}
+
+
             <div style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', padding: '4px', border: '1px solid var(--card-border)' }}>
               <button
                 type="button"

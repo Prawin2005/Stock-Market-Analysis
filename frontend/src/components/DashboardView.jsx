@@ -8,7 +8,7 @@ export default function DashboardView() {
   const currentPrices = prices;
   const summary = portfolio.summary || { cash: 100000.00, holdingsValue: 0.00, totalValue: 100000.00, totalProfitLoss: 0.00, totalProfitLossPct: 0.00 };
 
-  // Calculate top gainers/losers
+  
   const stockMetrics = stocks.map((s) => {
     const price = currentPrices[s.ticker] || s.basePrice;
     const change = price - s.basePrice;
@@ -19,9 +19,9 @@ export default function DashboardView() {
   const gainers = [...stockMetrics].sort((a, b) => b.changePct - a.changePct).slice(0, 3);
   const losers = [...stockMetrics].sort((a, b) => a.changePct - b.changePct).slice(0, 3);
 
-  // Quick navigation to chart helper
+  
   const viewChart = (ticker) => {
-    // We will save a variable in localStorage to tell MarketDataView which stock is selected
+    
     localStorage.setItem('selectedTicker', ticker);
     setActiveTab('market');
   };

@@ -8,13 +8,13 @@ export default function PortfolioView() {
   const summary = portfolio.summary || { cash: 100000.00, holdingsValue: 0.00, totalValue: 100000.00, totalProfitLoss: 0.00, totalProfitLossPct: 0.00 };
   const holdings = portfolio.holdings || [];
 
-  // Colors for holdings donut allocation
+
   const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#14b8a6', '#f43f5e', '#6366f1'];
 
-  // Calculations for Donut Chart
+
   const netAssets = summary.totalValue || 100000.00;
-  
-  // Create slice items including cash
+
+
   const slices = holdings.map((h, i) => ({
     label: h.ticker,
     value: h.marketValue,
@@ -49,7 +49,7 @@ export default function PortfolioView() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '10px 0' }}>
-      
+
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div>
@@ -87,11 +87,11 @@ export default function PortfolioView() {
 
       {/* Core Split Layout: Grid positions & Allocation Chart */}
       <div style={{ display: 'grid', gridTemplateColumns: holdings.length > 0 ? '3fr 2fr' : '1fr', gap: '30px' }}>
-        
+
         {/* Positions Table */}
         <div className="glass-panel" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '20px' }}>Open Positions</h3>
-          
+
           {holdings.length === 0 ? (
             <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
               <p style={{ marginBottom: '16px' }}>You do not own any equities yet.</p>
@@ -138,7 +138,7 @@ export default function PortfolioView() {
         {holdings.length > 0 && (
           <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', alignSelf: 'flex-start' }}>Asset Allocation</h3>
-            
+
             {/* SVG Donut Chart */}
             <div style={{ position: 'relative', width: '200px', height: '200px', marginBottom: '30px' }}>
               <svg viewBox="0 0 120 120" width="100%" height="100%" style={{ transform: 'rotate(-90deg)' }}>

@@ -59,12 +59,12 @@ const mockConsensus = {
   BTC: { buy: 12, hold: 5, sell: 2, strongBuy: 8, strongSell: 1 }
 };
 
-// Finnhub validation helper
+
 async function validateWithFinnhub(ticker, currentRecommendation) {
   const { FINNHUB_API_KEY } = process.env;
 
   if (!FINNHUB_API_KEY) {
-    // Return NO KEY status but generate realistic mock metrics so the UI displays nicely
+    
     const data = mockConsensus[ticker] || { buy: 10, hold: 10, sell: 2, strongBuy: 5, strongSell: 1 };
     const total = data.strongBuy + data.buy + data.hold + data.sell + data.strongSell;
     const score = Math.round(((data.strongBuy * 100) + (data.buy * 80) + (data.hold * 50) + (data.sell * 20) + (data.strongSell * 0)) / total);
@@ -85,7 +85,7 @@ async function validateWithFinnhub(ticker, currentRecommendation) {
 
     const list = await response.json();
     if (Array.isArray(list) && list.length > 0) {
-      const data = list[0]; // Get the latest monthly consensus period
+      const data = list[0]; 
       const strongBuy = data.strongBuy || 0;
       const buy = data.buy || 0;
       const hold = data.hold || 0;
@@ -99,7 +99,7 @@ async function validateWithFinnhub(ticker, currentRecommendation) {
 
       const consensus_score = Math.round(((strongBuy * 100) + (buy * 80) + (hold * 50) + (sell * 20) + (strongSell * 0)) / total);
       
-      // Determine consensus recommendation
+      
       let consensusRec = 'HOLD';
       if (consensus_score >= 65) {
         consensusRec = 'BUY';
