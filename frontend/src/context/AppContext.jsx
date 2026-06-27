@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const AppContext = createContext();
 
-const API_BASE = 'http://localhost:5000/api';
-const WS_BASE = 'ws://localhost:5000/ws';
+const API_BASE = 'https://stock-market-analysis-b2sk.onrender.com/api';
+const WS_BASE = 'wss://stock-market-analysis-b2sk.onrender.com/ws';
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
