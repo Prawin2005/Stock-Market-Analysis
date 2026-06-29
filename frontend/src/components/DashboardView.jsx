@@ -8,7 +8,7 @@ export default function DashboardView() {
   const currentPrices = prices;
   const summary = portfolio.summary || { cash: 100000.00, holdingsValue: 0.00, totalValue: 100000.00, totalProfitLoss: 0.00, totalProfitLossPct: 0.00 };
 
-  
+
   const stockMetrics = stocks.map((s) => {
     const price = currentPrices[s.ticker] || s.basePrice;
     const change = price - s.basePrice;
@@ -19,16 +19,16 @@ export default function DashboardView() {
   const gainers = [...stockMetrics].sort((a, b) => b.changePct - a.changePct).slice(0, 3);
   const losers = [...stockMetrics].sort((a, b) => a.changePct - b.changePct).slice(0, 3);
 
-  
+
   const viewChart = (ticker) => {
-    
+
     localStorage.setItem('selectedTicker', ticker);
     setActiveTab('market');
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '10px 0' }}>
-      
+
       {/* 1. Header welcome */}
       <div>
         <h1 style={{ fontSize: '2rem', marginBottom: '6px' }}>Simulator Dashboard</h1>
@@ -37,7 +37,7 @@ export default function DashboardView() {
 
       {/* 2. Top Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-        
+
         {/* Net Asset Value */}
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ background: 'var(--color-accent-glow)', color: 'var(--color-accent)', padding: '12px', borderRadius: '12px' }}>
@@ -73,7 +73,7 @@ export default function DashboardView() {
             <Eye size={24} />
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>WATCHED TICKERS</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>WATCHED</span>
             <h2 style={{ fontSize: '1.65rem', margin: '2px 0 4px 0' }}>{watchlist.length}</h2>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quick tracking elements configured</span>
           </div>
@@ -95,7 +95,7 @@ export default function DashboardView() {
 
       {/* 3. Core content grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
-        
+
         {/* Left Side: Live Stock Market Board */}
         <div className="glass-panel" style={{ padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -105,7 +105,7 @@ export default function DashboardView() {
               Live WebSocket Stream
             </span>
           </div>
-          
+
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '400px' }}>
               <thead>
@@ -135,11 +135,11 @@ export default function DashboardView() {
                         <button onClick={() => viewChart(stock.ticker)} className="glass-btn" style={{ padding: '6px 12px', fontSize: '0.75rem' }}>
                           Chart
                         </button>
-                        <button 
-                          onClick={() => toggleWatchlist(stock.ticker)} 
-                          className="glass-btn" 
-                          style={{ 
-                            padding: '6px 12px', 
+                        <button
+                          onClick={() => toggleWatchlist(stock.ticker)}
+                          className="glass-btn"
+                          style={{
+                            padding: '6px 12px',
                             fontSize: '0.75rem',
                             color: isWatched ? 'var(--color-warning)' : 'var(--text-primary)',
                             borderColor: isWatched ? 'rgba(245, 158, 11, 0.4)' : 'var(--card-border)'
@@ -158,7 +158,7 @@ export default function DashboardView() {
 
         {/* Right Side: Market Movers & Recent Activity */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          
+
           {/* Movers Card */}
           <div className="glass-panel" style={{ padding: '20px' }}>
             <h3 style={{ fontSize: '1.1rem', marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -196,13 +196,13 @@ export default function DashboardView() {
                   const stock = stocks.find(s => s.ticker === ticker);
                   const isUp = stock ? price >= stock.basePrice : true;
                   return (
-                    <div 
-                      key={ticker} 
+                    <div
+                      key={ticker}
                       onClick={() => viewChart(ticker)}
-                      className="glass-panel" 
-                      style={{ 
-                        padding: '12px', 
-                        cursor: 'pointer', 
+                      className="glass-panel"
+                      style={{
+                        padding: '12px',
+                        cursor: 'pointer',
                         textAlign: 'center',
                         background: 'rgba(255,255,255,0.01)',
                         borderColor: 'rgba(255,255,255,0.05)'

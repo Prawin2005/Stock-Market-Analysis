@@ -2,12 +2,18 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const AppContext = createContext();
 
-const API_BASE = 'https://stock-market-analysis-b2sk.onrender.com/api';
-const WS_BASE = 'wss://stock-market-analysis-b2sk.onrender.com/ws';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = `${API_URL}/api`;
+const WS_BASE = API_URL.startsWith('https') 
+  ? API_URL.replace('https://', 'wss://') + '/ws'
+  : API_URL.replace('http://', 'ws://') + '/ws';
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [token, setToken] = useState(() => {
+    const savedToken = localStorage.getItem('token');
+    return (savedToken && savedToken !== 'undefined' && savedToken !== 'null') ? savedToken : '';
+  });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [prices, setPrices] = useState({});
   const [stocks, setStocks] = useState([]);

@@ -42,7 +42,7 @@ export default function WatchlistView() {
         <div className="glass-panel" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Star size={18} style={{ color: 'var(--color-warning)' }} />
-            Tracked Symbols ({watchedStocks.length})
+            Tracking ({watchedStocks.length})
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
             {watchedStocks.map(s => {
@@ -106,7 +106,7 @@ export default function WatchlistView() {
       {/* All Stocks Browser */}
       <div className="glass-panel" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-          <h3 style={{ fontSize: '1.25rem' }}>All Available Symbols</h3>
+          <h3 style={{ fontSize: '1.25rem' }}>All Available Data</h3>
           <input
             type="text"
             className="glass-input"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext.jsx';
-import { KeyRound, Mail, UserPlus, LogIn, Lock } from 'lucide-react';
+import { KeyRound, Mail, Lock } from 'lucide-react';
 
 export default function AuthModal() {
   const { login, register } = useApp();
@@ -70,7 +70,7 @@ export default function AuthModal() {
               type="email"
               className="glass-input"
               style={{ width: '100%', paddingLeft: '40px' }}
-              placeholder="name@domain.com"
+              placeholder="name@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

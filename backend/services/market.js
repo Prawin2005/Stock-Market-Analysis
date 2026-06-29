@@ -1,7 +1,5 @@
 import { cache } from '../cache.js';
-import YahooFinance from 'yahoo-finance2';
-
-const yahooFinance = new YahooFinance();
+import yahooFinance from 'yahoo-finance2';
 
 export const STOCKS_LIST = [
   { ticker: 'AAPL',  name: 'Apple Inc.',      basePrice: 182.50,  volatility: 0.015, drift:  0.0001 },
