@@ -39,54 +39,70 @@ export default function DashboardView() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
 
         {/* Net Asset Value */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ background: 'var(--color-accent-glow)', color: 'var(--color-accent)', padding: '12px', borderRadius: '12px' }}>
-            <Briefcase size={24} />
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.03em' }}>NET PORTFOLIO VALUE</span>
+            <div style={{ background: 'var(--color-accent-glow)', color: 'var(--color-accent)', padding: '10px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Briefcase size={20} />
+            </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>NET PORTFOLIO VALUE</span>
-            <h2 style={{ fontSize: '1.65rem', margin: '2px 0 4px 0' }}>${(summary.totalValue || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+            <h2 style={{ fontSize: '1.65rem', margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`$${(summary.totalValue || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}>
+              ${(summary.totalValue || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }} className={(summary.totalProfitLoss || 0) >= 0 ? 'text-success' : 'text-error'}>
               {(summary.totalProfitLoss || 0) >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-              <span>
-                ${Math.abs(summary.totalProfitLoss || 0).toFixed(2)} ({summary.totalProfitLossPct?.toFixed(2)}%)
+              <span style={{ fontWeight: 600 }}>
+                ${Math.abs(summary.totalProfitLoss || 0).toFixed(2)} ({(summary.totalProfitLossPct || 0).toFixed(2)}%)
               </span>
             </div>
           </div>
         </div>
 
         {/* Cash Balance */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)', padding: '12px', borderRadius: '12px' }}>
-            <Wallet size={24} />
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.03em' }}>AVAILABLE CASH</span>
+            <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)', padding: '10px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Wallet size={20} />
+            </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>AVAILABLE CASH</span>
-            <h2 style={{ fontSize: '1.65rem', margin: '2px 0 4px 0' }}>${(summary.cash || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+            <h2 style={{ fontSize: '1.65rem', margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`$${(summary.cash || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}>
+              ${(summary.cash || 100000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h2>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Buying Power: 100% Cash Equivalent</span>
           </div>
         </div>
 
         {/* Watchlist Count */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-warning)', padding: '12px', borderRadius: '12px' }}>
-            <Eye size={24} />
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.03em' }}>WATCHED</span>
+            <div style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-warning)', padding: '10px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Eye size={20} />
+            </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>WATCHED</span>
-            <h2 style={{ fontSize: '1.65rem', margin: '2px 0 4px 0' }}>{watchlist.length}</h2>
+            <h2 style={{ fontSize: '1.65rem', margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              {watchlist.length}
+            </h2>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quick tracking elements configured</span>
           </div>
         </div>
 
         {/* Portfolio Assets Valuation */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ background: 'var(--color-purple-glow)', color: 'var(--color-purple)', padding: '12px', borderRadius: '12px' }}>
-            <Activity size={24} />
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.03em' }}>EQUITIES MARKET VALUE</span>
+            <div style={{ background: 'var(--color-purple-glow)', color: 'var(--color-purple)', padding: '10px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Activity size={20} />
+            </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>EQUITIES MARKET VALUE</span>
-            <h2 style={{ fontSize: '1.65rem', margin: '2px 0 4px 0' }}>${(summary.holdingsValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+            <h2 style={{ fontSize: '1.65rem', margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`$${(summary.holdingsValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}>
+              ${(summary.holdingsValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h2>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active asset positions</span>
           </div>
         </div>

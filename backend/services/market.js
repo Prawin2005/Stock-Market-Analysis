@@ -1,5 +1,6 @@
 import { cache } from '../cache.js';
-import yahooFinance from 'yahoo-finance2';
+import YahooFinanceClass from 'yahoo-finance2';
+const yahooFinance = new YahooFinanceClass({ suppressNotices: ['yahooSurvey'] });
 
 export const STOCKS_LIST = [
   { ticker: 'AAPL',  name: 'Apple Inc.',      basePrice: 182.50,  volatility: 0.015, drift:  0.0001 },

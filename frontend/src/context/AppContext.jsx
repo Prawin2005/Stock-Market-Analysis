@@ -2,7 +2,20 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const AppContext = createContext();
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getBackendUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== 'undefined' && window.location) {
+    const { hostname } = window.location;
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return 'https://stock-market-analysis-b2sk.onrender.com';
+    }
+  }
+  return 'http://localhost:5000';
+};
+
+const API_URL = getBackendUrl();
 const API_BASE = `${API_URL}/api`;
 const WS_BASE = API_URL.startsWith('https') 
   ? API_URL.replace('https://', 'wss://') + '/ws'
