@@ -71,30 +71,27 @@ router.post('/order', authenticateToken, async (req, res) => {
       });
 
     } else {
-      const holding = await db.getPortfolioHolding(user.id, symbol);
-      const availableShares = holding ? Number(holding.shares) : 0;
+      // Atomically deduct the shares from the portfolio
+      const updatedHolding = await db.deductHoldingShares(user.id, symbol, sharesNum);
 
-      if (availableShares < sharesNum) {
+      if (!updatedHolding) {
+        // Fetch current holding to return a precise error message
+        const holding = await db.getPortfolioHolding(user.id, symbol);
+        const availableShares = holding ? Number(holding.shares) : 0;
         return res.status(400).json({
           error: `Insufficient shares. You own ${availableShares} of ${symbol}, tried to sell ${sharesNum}.`,
         });
       }
 
-      const currentCash = Number(user.balance);
-      const newCash = Number((currentCash + totalCost).toFixed(2));
-      await db.updateUserBalance(user.id, newCash);
-
-      const newShares = Number((availableShares - sharesNum).toFixed(4));
-      const updatedHolding = await db.upsertPortfolioHolding(
-        user.id, symbol, newShares, newShares > 0 ? Number(holding.average_buy_price) : 0
-      );
+      // Atomically add cash to user's balance
+      const newBalance = await db.addBalance(user.id, totalCost);
 
       await db.createTransaction(user.id, symbol, 'SELL', sharesNum, currentPrice);
 
       return res.json({
         message: `Sold ${sharesNum} share(s) of ${symbol} at $${currentPrice}.`,
         transaction: { ticker: symbol, type: 'SELL', shares: sharesNum, price: currentPrice, total: totalCost },
-        balance: newCash,
+        balance: newBalance,
         holding: updatedHolding,
       });
     }

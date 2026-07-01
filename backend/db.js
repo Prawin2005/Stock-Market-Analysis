@@ -198,6 +198,22 @@ export const db = {
     return user.balance;
   },
 
+  addBalance: async (id, amount) => {
+    if (!useMock) {
+      const res = await pool.query(
+        `UPDATE users SET balance = balance + $1
+         WHERE id = $2
+         RETURNING balance`,
+        [amount, id]
+      );
+      return Number(res.rows[0].balance);
+    }
+    const user = mockDb.users.find(u => u.id === parseInt(id));
+    if (!user) throw new Error('User not found');
+    user.balance = Number((Number(user.balance) + amount).toFixed(2));
+    return user.balance;
+  },
+
   
   getPortfolio: async (userId) => {
     if (!useMock) {
@@ -254,6 +270,27 @@ export const db = {
       };
       mockDb.portfolios.push(p);
     }
+    return { ...p };
+  },
+
+  deductHoldingShares: async (userId, ticker, sharesToDeduct) => {
+    if (!useMock) {
+      const res = await pool.query(
+        `UPDATE portfolios 
+         SET shares = shares - $1,
+             average_buy_price = CASE WHEN shares - $1 = 0 THEN 0 ELSE average_buy_price END
+         WHERE user_id = $2 AND ticker = $3 AND shares >= $1
+         RETURNING *`,
+        [sharesToDeduct, userId, ticker]
+      );
+      if (res.rows.length === 0) return null;
+      const r = res.rows[0];
+      return { ...r, shares: Number(r.shares), average_buy_price: Number(r.average_buy_price) };
+    }
+    let p = mockDb.portfolios.find(p => p.user_id === parseInt(userId) && p.ticker === ticker);
+    if (!p || Number(p.shares) < sharesToDeduct) return null;
+    p.shares = Number((Number(p.shares) - sharesToDeduct).toFixed(4));
+    if (p.shares === 0) p.average_buy_price = 0;
     return { ...p };
   },
 
