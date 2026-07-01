@@ -87,7 +87,7 @@ export default function AuthModal() {
               type="password"
               className="glass-input"
               style={{ width: '100%', paddingLeft: '40px' }}
-              placeholder=""
+              placeholder="enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
