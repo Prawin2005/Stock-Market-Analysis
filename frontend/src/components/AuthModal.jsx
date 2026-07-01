@@ -55,10 +55,17 @@ export default function AuthModal() {
     setLoading(true);
     if (isLogin) {
       const result = await login(email, password);
-      if (result && result.error) setError(result.error);
+      if (!result.ok) {
+        setError(result.error);
+      }
     } else {
-      const ok = await register(email, password);
-      if (ok) { setIsLogin(true); setPassword(''); }
+      const result = await register(email, password);
+      if (result.ok) {
+        setIsLogin(true);
+        setPassword('');
+      } else {
+        setError(result.error);
+      }
     }
     setLoading(false);
   };

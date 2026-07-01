@@ -241,14 +241,14 @@ export function AppProvider({ children }) {
         setToken(data.token);
         setUser(data.user);
         showToast('Login successful! Welcome back.', 'success');
-        return true;
+        return { ok: true };
       } else {
         showToast(data.error || 'Login failed.', 'error');
-        return false;
+        return { ok: false, error: data.error || 'Login failed.' };
       }
     } catch (err) {
       showToast('Connection error. Server is offline.', 'error');
-      return false;
+      return { ok: false, error: 'Connection error. Server is offline.' };
     }
   };
 
@@ -262,16 +262,15 @@ export function AppProvider({ children }) {
       });
       const data = await res.json();
       if (res.ok) {
-        
         showToast('Account created! Please sign in with your credentials.', 'success');
-        return true;
+        return { ok: true };
       } else {
         showToast(data.error || 'Registration failed.', 'error');
-        return false;
+        return { ok: false, error: data.error || 'Registration failed.' };
       }
     } catch (err) {
       showToast('Connection error. Server is offline.', 'error');
-      return false;
+      return { ok: false, error: 'Connection error. Server is offline.' };
     }
   };
 
