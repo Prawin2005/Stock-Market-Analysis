@@ -3,16 +3,25 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 const AppContext = createContext();
 
 const getBackendUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  if (typeof window !== 'undefined' && window.location) {
-    const { hostname } = window.location;
-    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
-      return 'https://stock-market-analysis-b2sk.onrender.com';
+  let url = import.meta.env.VITE_API_URL;
+  if (!url) {
+    if (typeof window !== 'undefined' && window.location) {
+      const { hostname } = window.location;
+      if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        url = 'https://stock-market-analysis-b2sk.onrender.com';
+      }
     }
   }
-  return 'http://localhost:5000';
+  if (!url) {
+    url = 'http://localhost:5000';
+  }
+
+  // Sanitize url: remove trailing slashes and /api suffix
+  url = url.replace(/\/+$/, '');
+  if (url.endsWith('/api')) {
+    url = url.slice(0, -4);
+  }
+  return url;
 };
 
 const API_URL = getBackendUrl();
