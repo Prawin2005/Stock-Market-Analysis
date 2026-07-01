@@ -53,19 +53,28 @@ export default function AuthModal() {
     setError('');
     if (!email || !password) return;
     setLoading(true);
-    if (isLogin) {
-      const result = await login(email, password);
-      if (!result.ok) {
-        setError(result.error);
-      }
-    } else {
-      const result = await register(email, password);
-      if (result.ok) {
-        setIsLogin(true);
-        setPassword('');
+    try {
+      if (isLogin) {
+        const result = await login(email, password);
+        if (!result || !result.ok) {
+          const errMsg = (result && result.error) ? String(result.error) : 'Login failed. Please try again.';
+          console.error('[AuthModal] Login error:', errMsg);
+          setError(errMsg);
+        }
       } else {
-        setError(result.error);
+        const result = await register(email, password);
+        if (result && result.ok) {
+          setIsLogin(true);
+          setPassword('');
+        } else {
+          const errMsg = (result && result.error) ? String(result.error) : 'Registration failed. Please try again.';
+          console.error('[AuthModal] Register error:', errMsg);
+          setError(errMsg);
+        }
       }
+    } catch (err) {
+      console.error('[AuthModal] Unexpected error:', err);
+      setError('An unexpected error occurred. Please try again.');
     }
     setLoading(false);
   };

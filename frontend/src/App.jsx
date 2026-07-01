@@ -49,7 +49,12 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   if (!token) {
-    return <AuthModal />;
+    return (
+      <>
+        <AuthModal />
+        <ToastNotification />
+      </>
+    );
   }
 
   return (
