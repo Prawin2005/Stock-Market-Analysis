@@ -139,18 +139,21 @@ export async function getHistory(ticker) {
     const result = await yahooFinance.chart(queryTicker, queryOptions);
     
     if (result && result.quotes && result.quotes.length > 0) {
-      const history = result.quotes.map(quote => {
-        const d = new Date(quote.date);
-        return {
-          date: d.toISOString().split('T')[0],
-          price: Number((quote.close || quote.adjclose || 0).toFixed(2)),
-          open: Number((quote.open || 0).toFixed(2)),
-          high: Number((quote.high || 0).toFixed(2)),
-          low: Number((quote.low || 0).toFixed(2)),
-          close: Number((quote.close || 0).toFixed(2)),
-          volume: quote.volume || 0,
-        };
-      });
+      const history = result.quotes
+        .map(quote => {
+          const d = new Date(quote.date);
+          const closeVal = Number((quote.close || quote.adjclose || 0).toFixed(2));
+          return {
+            date: d.toISOString().split('T')[0],
+            price: closeVal,
+            open: Number((quote.open || quote.close || closeVal || 0).toFixed(2)),
+            high: Number((quote.high || quote.close || closeVal || 0).toFixed(2)),
+            low: Number((quote.low || quote.close || closeVal || 0).toFixed(2)),
+            close: closeVal,
+            volume: quote.volume || 0,
+          };
+        })
+        .filter(item => item.close > 0);
       return history;
     } else {
       console.warn(`[Market] Yahoo Finance returned no data for ${ticker}. Using mock fallback.`);
